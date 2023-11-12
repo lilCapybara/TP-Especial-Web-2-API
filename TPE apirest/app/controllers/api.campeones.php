@@ -1,6 +1,7 @@
 <?php
 require_once 'app/controllers/api.controller.php';
 require_once 'app/models/campeones.model.php';
+require_once 'objetos/Campeon.php';
 
 class ApiCampeones extends ApiController {
     private $model;
@@ -48,30 +49,10 @@ class ApiCampeones extends ApiController {
             }
         }
 
-      /*  public function post()  intento de metodo create
-    {
 
-        $data = $this->getData();
-
-        if (empty($data->nombre) || empty($data->precio)||empty($data->rol)) {
-         
-            $this->view->response("Los datos necesarios no están completos.", 400);
-            return;
-        }
-
-        $res = $this->model->insertChamp($data->nombre, $data->precio, $data->rol);
-
-        if (!$res) {
-            $this->view->response("Se produjo un error al intentar agregar.", 404);
-            return;
-        }
-
-        $this->view->response("Se agregó con éxito el recurso con id = $res.", 201);
-    }
-*/
      function createChamp($params = []) {
         $data = $this->getData();
-        if (empty($data->nombre) || empty($data->precio)) {
+        if (empty($data->nombre) || empty($data->precio) || empty($data->rol)) {    //Verifico que no esten vacios los campos pedidos
             $this->view->response([
                 'data' => 'faltó introducir algun campo',
                 'status' => 'error'
@@ -80,8 +61,8 @@ class ApiCampeones extends ApiController {
         $champ = new Campeon();
         $champ->setValues($data->nombre, $data->rol, $data->precio);
 
-        $Champion_id = $this->model->insertChamp($champ->getNombre(),$champ->getRol(),$champ->getPrecio());
-        $Champion_agregado = $this->model->getChampById($Champion_id);
+        $Champion_id = $this->model->insertChamp($champ->getNombre(),$champ->getRol(),$champ->getPrecio()); //insertChamp devuelve el id del
+        $Champion_agregado = $this->model->getChampById($Champion_id);                                      //ultimo campeon insertado
 
         if ($Champion_agregado) {
             $this->view->response([
@@ -90,7 +71,7 @@ class ApiCampeones extends ApiController {
             ], 200);
         } else
             $this->view->response([
-                'data' => "La canción no fué creada",
+                'data' => "El campeon no fue creado",
                 'status' => 'error'
             ], 500);
     
@@ -104,10 +85,10 @@ class ApiCampeones extends ApiController {
                 $body = $this->getData();
                 $nombre = $body->nombre;
                 $rol = $body->rol;
-                $Precio = $body->Precio;
-                $this->model->updateChamp($nombre, $rol, $Precio, $Champion_id);
+                $precio = $body->precio;
+                $this->model->updateChamp($nombre, $rol, $precio, $Champion_id);
 
-                $this->view->response('El campeon con id='.$Champion_id.' ha sido modificada.', 200);
+                $this->view->response('El campeon con id='.$Champion_id.' ha sido modificado.', 200);
             } else {
                 $this->view->response('El campeon con id='.$Champion_id.' no existe.', 404);
             }

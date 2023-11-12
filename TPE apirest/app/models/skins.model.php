@@ -11,6 +11,15 @@ class Skins_model extends Model {
         return $skins;
     }
 
+    public function getSkinsOrderByName() {
+
+        $query = $this->db->prepare('SELECT * FROM skins ORDER BY precio ASC');
+        $query->execute();
+        $skins = $query->fetchAll(PDO::FETCH_OBJ);
+        return $skins;
+    }
+
+    
     public   function getSkinsById($Skin_id) {
         $query = $this->db->prepare('SELECT *, campeones.Nombre AS ChampionName, skins.Nombre AS SkinName FROM skins JOIN campeones ON campeones.Champion_id = skins.Champion_id WHERE skin_id = ?');
         $query->execute([$Skin_id]);

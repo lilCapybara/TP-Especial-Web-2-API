@@ -16,7 +16,7 @@ class ApiSkins extends ApiController{
         $skin = $this->model->getSkinsById($id);
     
         if (empty($id)) {
-            $skins = $this->model->getAllSkins();
+            $skins = $this->model->getSkinsOrderByName();
             $this->view->response([
                 'data' => $skins,
                 'status' => "success"

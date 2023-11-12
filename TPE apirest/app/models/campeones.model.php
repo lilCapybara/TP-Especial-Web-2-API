@@ -3,7 +3,7 @@ require_once 'app/models/model.php';
 
 class Campeones_model extends Model {
     public function getAllChamp() {
-        $query = $this->db->prepare('SELECT * FROM `campeones` ');
+        $query = $this->db->prepare('SELECT * FROM `campeones` ORDER BY nombre ASC ');
         $query->execute();
 
         $champ = $query->fetchAll(PDO::FETCH_OBJ);
@@ -31,6 +31,15 @@ class Campeones_model extends Model {
         $query->execute([$nombre, $rol, $precio]);
 
         return $this->db->lastInsertId();
+    }
+
+    
+    public function getChampOrdeXNombre() {
+
+        $query = $this->db->prepare('SELECT * FROM campeones ORDER BY nombre ASC');
+        $query->execute([]);
+        $Champ = $query->fetchAll(PDO::FETCH_OBJ);
+        return $Champ;
     }
 
     public function deleteChamp($Champion_id) {

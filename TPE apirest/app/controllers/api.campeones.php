@@ -15,7 +15,7 @@ class ApiCampeones extends ApiController {
         $id = $params[":Champion_id"];
     
         if (empty($id)) {
-            $champ = $this->model->getAllChamp();
+            $champ = $this->model->getChampOrdeXNombre();
             $this->view->response([
                 'data' => $champ,
                 'status' => "success"

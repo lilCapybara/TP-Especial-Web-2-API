@@ -23,26 +23,23 @@ class Campeon{
         return $this->rol;}
 
 
-        public function getPrecio(){
-            return $this->precio;
-        }
+    public function getPrecio(){
+        return $this->precio;
+    }
 
-      
+    public function setRol($Rol){
+        $this->rol = $Rol;
+    }
+    public function setPrecio($precio){
+        $this->precio = $precio;
+    }
 
-        public function setRol($Rol){
-            $this->rol = $Rol;
-        }
-        public function setPrecio($precio){
-            $this->precio = $precio;}
+    public function setChampionId($champion_id){
+        $this->champion_id = $champion_id;
+    }
 
-            public function setChampionId($champion_id){
-                $this->champion_id = $champion_id;}
-
-                public function setNombre($nombre){
-                    $this->nombre = $nombre;}
-
-
-
-
-
+    public function setNombre($nombre){
+        $this->nombre = $nombre;
+    }
 }
+?>

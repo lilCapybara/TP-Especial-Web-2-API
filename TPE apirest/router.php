@@ -17,7 +17,7 @@
 
 
     $router->addRoute('Skins',     'GET',    'ApiSkins', 'get'); # ApiSkins->get($params) trae todas las skins
-    $router->addRoute('Skins',     'POST',   'ApiSkins', 'create');#trae la skin que coincida con el id numerico ingresado
+    $router->addRoute('Skins',     'POST',   'ApiSkins', 'createSkins');#trae la skin que coincida con el id numerico ingresado
     $router->addRoute('Skins/:Skin_id', 'GET',    'ApiSkins', 'get');
     $router->addRoute('Skins/:Skin_id', 'PUT',    'ApiSkins', 'update');
     $router->addRoute('Skins/:Skin_id', 'DELETE', 'ApiSkins', 'delete');

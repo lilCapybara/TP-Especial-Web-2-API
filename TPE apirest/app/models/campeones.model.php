@@ -30,18 +30,17 @@ class Campeones_model extends Model {
         return $champ;
     }
 
-    public function updateChamp($nombre, $rol, $Precio, $Champion_id) {
-
-        $query = $this->db->prepare('UPDATE campeones SET nombre = ?, rol = ?, precio = ? WHERE Champion_id = ?');
-        $query->execute([$nombre, $rol, $Precio, $Champion_id]);
-    }
-
     public function getColumnNames() {
         $query = $this->db->query('DESCRIBE campeones');
         $columns = $query->fetchAll(PDO::FETCH_COLUMN);
         return $columns;
     }
 
+    public function updateChamp($nombre, $rol, $Precio, $Champion_id) {
+
+        $query = $this->db->prepare('UPDATE campeones SET nombre = ?, rol = ?, precio = ? WHERE Champion_id = ?');
+        $query->execute([$nombre, $rol, $Precio, $Champion_id]);
+    }
 
     public   function getChampById($Champion_id) {
         $query = $this->db->prepare('SELECT * FROM `campeones` WHERE Champion_id=?');
@@ -59,17 +58,10 @@ class Campeones_model extends Model {
         return $this->db->lastInsertId();
     }
 
-    /*
-    public function getChampOrderByName() {
-
-        $query = $this->db->prepare('SELECT * ORDER BY nombre ASC');
-        $query->execute();
-        $Champ = $query->fetchAll(PDO::FETCH_OBJ);
-        return $Champ;
-    }*/
-
     public function deleteChamp($Champion_id) {
         $query = $this->db->prepare('DELETE FROM campeones WHERE Champion_id =?');
         $query->execute([$Champion_id]);
     }
+
+    
 }

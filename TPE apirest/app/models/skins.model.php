@@ -2,26 +2,41 @@
 require_once 'app/models/model.php';
 
 class Skins_model extends Model {
-    public   function getAllSkins() {
-        $query = $this->db->prepare('SELECT * FROM `skins` ');
-        $query->execute();
-
-        $skins = $query->fetchAll(PDO::FETCH_OBJ);
-
-        return $skins;
-    }
-
-    public function getSkinsOrderByName() {
-
-        $query = $this->db->prepare('SELECT * FROM skins ORDER BY precio ASC');
-        $query->execute();
-        $skins = $query->fetchAll(PDO::FETCH_OBJ);
-        return $skins;
-    }
-
     
+    public   function getAllSkins( $queryParams) {
+        $sql = "SELECT * FROM skins";
+
+        // Filtro
+        if (!empty($queryParams['filter']) && !empty($queryParams['value']))
+            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE \'%' . $queryParams['value'] . '%\'';
+
+        // Ordenamiento
+        if (!empty($queryParams['sort'])) {
+            $sql .= ' ORDER BY '. $queryParams['sort'];
+
+            // Orden ascendente y descendente
+            if (!empty($queryParams['order']))
+                $sql .= ' ' . $queryParams['order'];}
+
+                if (!empty($queryParams['limit']))
+                $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
+    
+            // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por el controlador)
+            $query = $this->db->prepare($sql);        
+            $query->execute();
+    
+            $skin = $query->fetchAll(PDO::FETCH_OBJ);
+            return $skin;
+    }
+
+    public function getColumnNames() {
+        $query = $this->db->query('DESCRIBE skins');
+        $columns = $query->fetchAll(PDO::FETCH_COLUMN);
+        return $columns;
+    }
+
     public   function getSkinsById($Skin_id) {
-        $query = $this->db->prepare('SELECT *, campeones.Nombre AS ChampionName, skins.Nombre AS SkinName FROM skins JOIN campeones ON campeones.Champion_id = skins.Champion_id WHERE skin_id = ?');
+        $query = $this->db->prepare('SELECT *, skins.Nombre AS SkinName FROM skins JOIN campeones ON campeones.Champion_id = skins.Champion_id WHERE skin_id = ?');
         $query->execute([$Skin_id]);
 
 

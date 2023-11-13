@@ -2,16 +2,37 @@
 require_once 'app/controllers/api.controller.php';
 require_once 'app/models/campeones.model.php';
 require_once 'objetos/Campeon.php';
+require_once 'app/helpers/auth.api.helper.php';
 
 class ApiCampeones extends ApiController {
     private $model;
+    private $AuthHelper;
 
     function __construct() {
         parent::__construct();
         $this->model = new Campeones_model();
+        $this->AuthHelper=new AuthHelper();
     }
 
+    public function getById($params = []) {
+        $id = $params[":Champion_id"];
+        $champ = $this->model->getChampById($id);
+        if (!empty($champ)) {
+            $this->view->response([
+                'data' => $champ,
+                'status' => 'success',
+            ], 200);
+        } else {
+            $this->view->response([
+                'data' => 'El campeon solicitado no existe',
+                'status' => 'error'
+            ], 404);
+        }
+    }
+
+
     function get($params = []) {
+
         $columns = $this->model->getColumnNames();
 
         // Arreglo donde se almacenarán los parámetros de consulta
@@ -19,16 +40,16 @@ class ApiCampeones extends ApiController {
 
         // Filtro
         $queryParams += $this->handleFilter($columns);
-
+        
         // Ordenamiento
         $queryParams += $this->handleSort($columns);
 
         // Paginación
         $queryParams += $this->handlePagination();
-
+        
         // Se obtienen los álbumes y se devuelven en formato JSON
-        $albums = $this->model->getAllChamp($queryParams);
-        return $this->view->response($albums, 200);
+        $Champs = $this->model->getAllChamp($queryParams);
+        return $this->view->response($Champs, 200);
     }
 
     function delete($params = []) {
@@ -45,13 +66,20 @@ class ApiCampeones extends ApiController {
 
 
      function createChamp($params = []) {
+
+        $user = $this->AuthHelper->currentUser();   //Verifico que el usuario este logueado
+        if (!$user) {
+            $this->view->response('El usuario no esta autorizado para realizar esta accion', 401);
+            return;
+        }
+
         $data = $this->getData();
         if (empty($data->nombre) || empty($data->precio) || empty($data->rol)) {    //Verifico que no esten vacios los campos pedidos
             $this->view->response([
                 'data' => 'faltó introducir algun campo',
                 'status' => 'error'
             ], 400);
-        }
+        }else{
         $champ = new Campeon();
         $champ->setValues($data->nombre, $data->rol, $data->precio);
 
@@ -70,8 +98,15 @@ class ApiCampeones extends ApiController {
             ], 500);
     
         }
+    }
 
         function update($params = []) {
+
+                $user = $this->AuthHelper->currentUser();   //Verifico que el usuario este logueado
+            if (!$user) {
+                $this->view->response('El usuario no esta autorizado para realizar esta accion', 401);
+                return;
+            }
             $Champion_id = $params[':Champion_id'];
             $champ = $this->model->getChampById($Champion_id);
 
@@ -99,19 +134,19 @@ class ApiCampeones extends ApiController {
                 $filter = $_GET['filter'];
                 $value = $_GET['value'];
 
-              
+          
     
                 // Si el campo no existe se produce un error
                 if (!in_array($filter, $columns)) {
                     $this->view->response("Invalid filter parameter (field '$filter' does not exist)", 400);
                     die();
                 }
-    
+               
                 $filterData['filter'] = $filter;
                 $filterData['value'] = $value;
            
             }
-    
+            
             return $filterData;
         }
     
@@ -187,5 +222,7 @@ class ApiCampeones extends ApiController {
            
             return $paginationData;
         }
+    
+    
 
     }
